@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = 'YOUR_SUPABASE_PROJECT_URL'
-const supabaseKey = 'YOUR_SUPABASE_ANON_KEY'
+const supabaseUrl = 'https://vyxtwyzidxjnyqlyzflu.supabase.co'
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5eHR3eXppZHhqbnlxbHl6Zmx1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc5OTI4ODgsImV4cCI6MjA1MzU2ODg4OH0.dIm6gldXHY2YsQu8InniUMtVF-cAT3BArOnbZ4mS7XI'
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 async function saveToSupabase(data) {
@@ -51,7 +51,7 @@ async function submitInterview() {
         await saveToSupabase(payload);
 
         // Send to n8n webhook
-        const n8nResponse = await fetch('https://askchay.app.n8n.cloud/webhook/2b7ccf76-a1e0-4c2f-8622-c107a07b4168', {
+        const n8nResponse = await fetch('https://askchay.app.n8n.cloud/webhook-test/00daea04-9151-42d8-af03-f2922090c772', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
