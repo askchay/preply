@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PM Interview Coach | AI-Powered Practice</title>
+    <style>
+        :root {
+            --primary: #2F80ED;
+            --secondary: #4F4F4F;
+            --background: #F5F7FB;
+            --text: #333333;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            margin-top: 0.25rem;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .question-card {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary);
+            background: #F8FAFF;
+        }
+
+        .audio-controls {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        #feedbackSection {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #FFF;
+            border-radius: 8px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Product Manager Interview Coach</h1>
+            <p>Practice with realistic questions and get AI-powered feedback</p>
+        </div>
+
+        <div class="card">
+            <div class="form-group">
+                <label>Company Name</label>
+                <input type="text" id="company" placeholder="e.g. Google, Amazon...">
+            </div>
+            
+            <div class="form-group">
+                <label>Job Description</label>
+                <textarea id="jd" rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Upload Resume</label>
+                <input type="file" id="resume" accept=".pdf,.doc,.docx">
+            </div>
+
+            <div class="form-group">
+                <label>Question Category</label>
+                <select id="category">
+                    <option value="general">General Product Sense</option>
+                    <option value="design">Product Design</option>
+                    <option value="behavioral">Behavioral Questions</option>
+                    <option value="strategy">Product Strategy</option>
+                    <option value="analytical">Analytical & Metrics</option>
+                    <option value="technical">Technical Questions</option>
+                    <option value="leadership">Leadership & Teamwork</option>
+                    <option value="execution">Execution & Prioritization</option>
+                    <option value="remote">Remote Collaboration</option>
+                </select>
+            </div>
+
+            <button onclick="generateQuestions()">Generate Questions</button>
+        </div>
+
+        <div id="interviewSection" class="card" style="display: none;">
+            <div id="questionsContainer"></div>
+            <button onclick="submitInterview()">Submit Answers</button>
+            <button onclick="showFeedbackForm()" style="margin-left: 1rem;">Submit Feedback</button>
+        </div>
+
+        <div id="feedbackSection">
+            <h3>Analysis & Feedback</h3>
+            <div id="feedbackContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = {
+            general: [
+                "How would you prioritize between user needs and business goals?",
+                "Describe a product you admire and why it's successful",
+                "How would you validate a new product idea?",
+                "What metrics define a successful product?",
+                "How do you handle conflicting stakeholder opinions?"
+            ],
+            design: [
+                "Design a feature to reduce churn in a subscription product",
+                "Improve the checkout experience for an e-commerce app",
+                "Design a dashboard for food delivery drivers",
+                "Make complex enterprise software more user-friendly",
+                "Design a meal-planning feature for fitness app"
+            ],
+            behavioral: [
+                "Tell me about a time you failed and learned",
+                "Describe resolving conflict between teams",
+                "How do you handle tight deadlines?",
+                "Share an example of influencing without authority",
+                "Describe making a decision with incomplete data"
+            ],
+            strategy: [
+                "How would you position against emerging competitors?",
+                "What's your 3-year vision for our product?",
+                "How would you enter a new international market?",
+                "What strategic partnerships would you pursue?",
+                "How would you pivot due to new regulations?"
+            ],
+            analytical: [
+                "DAU dropped 15% WoW - how would you investigate?",
+                "Measure success of recommendation algorithm",
+                "Design an A/B test to improve conversion",
+                "Determine if a feature drives revenue growth",
+                "Key metrics for new SaaS product launch"
+            ],
+            technical: [
+                "Design a URL shortening service",
+                "Approach to API rate limiting",
+                "Factors for choosing database systems",
+                "Build vs buy a CMS decision",
+                "Ensure data consistency in microservices"
+            ],
+            leadership: [
+                "Handle conflict between engineers and designers",
+                "Mentor junior PMs effectively",
+                "Build consensus among executives",
+                "Manage cross-functional teams",
+                "Handle underperforming team members"
+            ],
+            execution: [
+                "Prioritize features with competing deadlines",
+                "Framework for scope vs timeline tradeoffs",
+                "Handle urgent feature requests",
+                "Tools for project tracking",
+                "Accelerate delivery deadlines"
+            ],
+            remote: [
+                "Maintain team cohesion remotely",
+                "Implement async collaboration processes",
+                "Onboard new members remotely",
+                "Run effective virtual workshops",
+                "Manage timezone challenges"
+            ]
+        };
+
+        function generateQuestions() {
+            const category = document.getElementById('category').value;
+            const interviewSection = document.getElementById('interviewSection');
+            const questionsContainer = document.getElementById('questionsContainer');
+            
+            let html = '<h3>Interview Questions</h3>';
+            questions[category].forEach((q, i) => {
+                html += `
+                    <div class="question-card">
+                        <p><strong>Q${i+1}:</strong> ${q}</p>
+                        <textarea id="answer-${i}" placeholder="Type your answer..." rows="3"></textarea>
+                        <div class="audio-controls">
+                            <button onclick="startRecording(${i})">🎤 Record</button>
+                            <span id="timer-${i}">00:00</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            questionsContainer.innerHTML = html;
+            interviewSection.style.display = 'block';
+        }
+
+        async function submitInterview() {
+            const payload = {
+                company: document.getElementById('company').value,
+                jd: document.getElementById('jd').value,
+                category: document.getElementById('category').value,
+                answers: []
+            };
+
+            // Collect answers
+            const category = payload.category;
+            questions[category].forEach((q, i) => {
+                const answer = document.getElementById(`answer-${i}`).value;
+                payload.answers.push({ question: q, answer });
+            });
+
+            try {
+                // Simulated API call
+                const response = await mockApiCall('https://askchay.app.n8n.cloud/webhook/2b7ccf76-a1e0-4c2f-8622-c107a07b4168', payload);
+                showFeedback(response);
+                console.log('Submission successful:', response);
+            } catch (error) {
+                console.error('Submission failed:', error);
+            }
+        }
+
+        function showFeedback(data) {
+            const feedbackSection = document.getElementById('feedbackSection');
+            feedbackSection.style.display = 'block';
+            
+            let html = '<div class="feedback-item">';
+            data?.feedback?.forEach((item, i) => {
+                html += `
+                    <h4>Question ${i+1} Feedback:</h4>
+                    <p>${item}</p>
+                `;
+            });
+            html += `<h4>Overall Feedback:</h4><p>${data.overall}</p></div>`;
+            document.getElementById('feedbackContent').innerHTML = html;
+        }
+
+        function showFeedbackForm() {
+            const feedback = prompt('Please share your experience with this interview practice:');
+            if (feedback) {
+                mockApiCall('/api/feedback', { feedback });
+                alert('Thank you for your feedback!');
+            }
+        }
+
+        // Mock API function
+        async function mockApiCall(endpoint, data) {
+            console.log('API Call:', endpoint, data);
+            
+            // Simulated response
+            if (endpoint === '/api/submit') {
+                return {
+                    feedback: [
+                        "Good structure but add more metrics",
+                        "Expand on user research methods",
+                        "Excellent conflict resolution example",
+                        "Needs more competitive analysis",
+                        "Good technical explanation"
+                    ],
+                    overall: "Strong strategic thinking but improve metric-driven analysis"
+                };
+            }
+            return { status: 'Test api response' };
+        }
+
+        // Audio recording logic
+        let recorder;
+        async function startRecording(questionId) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                recorder = new MediaRecorder(stream);
+                recorder.start();
+                
+                // Implement recording timer
+                let seconds = 0;
+                const timer = setInterval(() => {
+                    seconds++;
+                    document.getElementById(`timer-${questionId}`).textContent = 
+                        `${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;
+                }, 1000);
+
+                recorder.ondataavailable = e => {
+                    // Handle audio data
+                };
+                
+                recorder.onstop = () => clearInterval(timer);
+            } catch (err) {
+                console.error('Recording failed:', err);
+            }
+        }
+    </script>
+</body>
+</html>
