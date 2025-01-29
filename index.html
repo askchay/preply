@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,7 +36,7 @@
             border-radius: 12px;
             padding: 2rem;
             margin-bottom: 2rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .form-group {
@@ -48,7 +49,9 @@
             font-weight: 600;
         }
 
-        input, select, textarea {
+        input,
+        select,
+        textarea {
             width: 100%;
             padding: 0.75rem;
             border: 1px solid #E0E0E0;
@@ -93,6 +96,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -102,10 +106,19 @@
 
         <div class="card">
             <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="userName" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="userEmail" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
                 <label>Company Name</label>
                 <input type="text" id="company" placeholder="e.g. Google, Amazon...">
             </div>
-            
+
             <div class="form-group">
                 <label>Job Description</label>
                 <textarea id="jd" rows="4"></textarea>
@@ -217,7 +230,7 @@
             const category = document.getElementById('category').value;
             const interviewSection = document.getElementById('interviewSection');
             const questionsContainer = document.getElementById('questionsContainer');
-            
+
             let html = '<h3>Interview Questions</h3>';
             questions[category].forEach((q, i) => {
                 html += `
@@ -248,7 +261,10 @@
             const category = payload.category;
             questions[category].forEach((q, i) => {
                 const answer = document.getElementById(`answer-${i}`).value;
-                payload.answers.push({ question: q, answer });
+                payload.answers.push({
+                    question: q,
+                    answer
+                });
             });
 
             try {
@@ -264,7 +280,7 @@
         function showFeedback(data) {
             const feedbackSection = document.getElementById('feedbackSection');
             feedbackSection.style.display = 'block';
-            
+
             let html = '<div class="feedback-item">';
             data?.feedback?.forEach((item, i) => {
                 html += `
@@ -279,7 +295,9 @@
         function showFeedbackForm() {
             const feedback = prompt('Please share your experience with this interview practice:');
             if (feedback) {
-                mockApiCall('/api/feedback', { feedback });
+                mockApiCall('/api/feedback', {
+                    feedback
+                });
                 alert('Thank you for your feedback!');
             }
         }
@@ -287,7 +305,7 @@
         // Mock API function
         async function mockApiCall(endpoint, data) {
             console.log('API Call:', endpoint, data);
-            
+
             // Simulated response
             if (endpoint === '/api/submit') {
                 return {
@@ -301,29 +319,33 @@
                     overall: "Strong strategic thinking but improve metric-driven analysis"
                 };
             }
-            return { status: 'Test api response' };
+            return {
+                status: 'Test api response'
+            };
         }
 
         // Audio recording logic
         let recorder;
         async function startRecording(questionId) {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    audio: true
+                });
                 recorder = new MediaRecorder(stream);
                 recorder.start();
-                
+
                 // Implement recording timer
                 let seconds = 0;
                 const timer = setInterval(() => {
                     seconds++;
-                    document.getElementById(`timer-${questionId}`).textContent = 
+                    document.getElementById(`timer-${questionId}`).textContent =
                         `${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;
                 }, 1000);
 
                 recorder.ondataavailable = e => {
                     // Handle audio data
                 };
-                
+
                 recorder.onstop = () => clearInterval(timer);
             } catch (err) {
                 console.error('Recording failed:', err);
@@ -331,4 +353,5 @@
         }
     </script>
 </body>
+
 </html>
