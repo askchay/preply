@@ -1,3 +1,4 @@
+npm install @supabase/supabase-js
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = 'https://vyxtwyzidxjnyqlyzflu.supabase.co'
